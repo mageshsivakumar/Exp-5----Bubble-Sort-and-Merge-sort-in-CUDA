@@ -1,49 +1,55 @@
-# Exp5 Bubble Sort and Merge sort in CUDA
+<h1 align=center> Exp - 5 - Bubble Sort and Merge sort in CUDA </h1>
+<h3>NAME: Magesh s</h3>
+<h3>REGISTER NO: 2122224040180</h3>
+<h3>DATE : 27/03/26</h3>
 
-**NAME : Magesh s**
-**DATE: 13/03/26
-
-**REGISTER NO : 212224040180**
-
-**Objective:**
-Implement Bubble Sort and Merge Sort on the GPU using CUDA, analyze the efficiency of this sorting algorithm when parallelized, and explore the limitations of Bubble Sort and Merge Sort for large datasets.
 ## AIM:
-Implement Bubble Sort and Merge Sort on the GPU using CUDA to enhance the performance of sorting tasks by parallelizing comparisons and swaps within the sorting algorithm.
-
-Code Overview:
-You will work with the provided CUDA implementation of Bubble Sort and Merge Sort. The code initializes an unsorted array, applies the Bubble Sort, Merge Sort algorithm in parallel on the GPU, and returns the sorted array as output.
+To Implement Bubble Sort and Merge Sort on the GPU using CUDA to enhance the performance of sorting tasks by parallelizing comparisons and swaps within the sorting algorithm.
 
 ## EQUIPMENTS REQUIRED:
-Hardware – PCs with NVIDIA GPU & CUDA NVCC, Google Colab with NVCC Compiler, CUDA Toolkit installed, and sample datasets for testing.
+- Hardware
+   - PCs with NVIDIA GPU & CUDA NVCC
+   - Google Colab with NVCC Compiler, CUDA Toolkit installed
+
 
 ## PROCEDURE:
 
-Tasks:
+1. **Initialize the CUDA Environment**:
+   - Set up the necessary hardware and software for CUDA programming, including an NVIDIA GPU and NVCC compiler (Google Colab with CUDA Toolkit if using a cloud environment).
 
-a. Modify the Kernel:
+2. **Define Bubble Sort and Merge Sort Kernels**:
+   - **Bubble Sort Kernel**: Define a CUDA kernel to perform Bubble Sort using a single block and parallelizing comparisons and swaps across threads. Each thread performs a comparison and swap if necessary, iterating over multiple passes.
+   - **Merge Sort Kernel**: Define a CUDA kernel to perform Merge Sort in stages, where each thread merges sub-arrays, doubling the size of merged sub-arrays in each iteration.
 
-Implement Bubble Sort and Merge Sort using CUDA by assigning each comparison and swap task to individual threads.
-Ensure the kernel checks boundaries to avoid out-of-bounds access, particularly for edge cases.
-b. Performance Analysis:
+3. **Memory Allocation on Device**:
+   - Allocate device memory for the arrays to be sorted (using `cudaMalloc`).
+   - Copy data from the host (CPU) array to the device (GPU) using `cudaMemcpy`.
 
-Measure the execution time of the CUDA Bubble Sort with different array sizes (e.g., 512, 1024, 2048 elements).
-Experiment with various block sizes (e.g., 16, 32, 64 threads per block) to analyze their effect on execution time and efficiency.
-c. Comparison:
+4. **Kernel Execution and Synchronization**:
+   - Launch the Bubble Sort kernel or Merge Sort kernel on the GPU. Use appropriate block and grid dimensions, such as specifying block size and calculating the required number of blocks.
+   - Use `__syncthreads()` to synchronize threads after each pass in the sorting kernels, ensuring correct data access.
 
-Compare the performance of the CUDA-based Bubble Sort and Merge Sort with a CPU-based Bubble Sort and Merge Sort implementation.
-Discuss the differences in execution time and explain the limitations of Bubble Sort and Merge Sort when parallelized on the GPU.
+5. **CPU Sorting Functions**:
+   - Implement Bubble Sort and Merge Sort for the CPU to compare performance. Measure execution time using high-resolution clock timers from the `chrono` library.
+
+6. **Run Sorting Algorithms**:
+   - Test both algorithms with arrays of different sizes (500 and 1000 elements) and configurations (different block sizes).
+   - For each sorting algorithm, execute both CPU and GPU implementations and measure execution times.
+
+7. **Measure and Compare Performance**:
+   - Record the GPU execution time using `cudaEventRecord` for precise time tracking.
+   - Compare the CPU and GPU execution times for both sorting algorithms, noting the effect of different block sizes and array sizes.
+
+8. **Copy Data Back to Host and Clean Up**:
+   - After the GPU kernel completes, copy the sorted array back to the host.
+   - Free the allocated device memory to prevent memory leaks.
+
+9. **Output Results**:
+   - Print the execution times of Bubble Sort and Merge Sort on both CPU and GPU, formatted in a table for comparison.
+   - Analyze the performance improvement observed due to parallelization on the GPU.
+
 ## PROGRAM:
-
-```
-!apt-get install -y nvidia-cuda-toolkit
-```
-```
-!pip install git+https://github.com/andreinechaev/nvcc4jupyter.git
-%load_ext nvcc4jupyter
-```
-
-```
-%%cuda
+```c
 #include <stdio.h>
 #include <stdlib.h>
 #include <cuda.h>
@@ -317,14 +323,112 @@ int main() {
     }
     return 0;
 }
-
 ```
-
 
 ## OUTPUT:
 
-<img width="454" height="674" alt="image" src="https://github.com/user-attachments/assets/877e0129-8041-4715-bb38-a56d682e8922" />
+### Performance Comparison: CPU vs GPU
 
+<img style="display=inline" src="https://github.com/user-attachments/assets/f5be4f54-cb69-430e-a78f-2d9812d2bb0e" height="250"/>
+
+
+<table style="text-align=center">
+        <thead>
+            <tr>
+                <th>Algorithm</th>
+                <th>Array Size</th>
+                <th>Platform</th>
+                <th>Block Size</th>
+                <th>Num Blocks</th>
+                <th>Time (ms)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td rowspan="3">Bubble Sort</td>
+                <td rowspan="3">500 elements</td>
+                <td>CPU</td>
+                <td>-</td>
+                <td>-</td>
+                <td>0.796549</td>
+            </tr>
+            <tr>
+                <td>GPU</td>
+                <td>16</td>
+                <td>32</td>
+                <td>0.316128</td>
+            </tr>
+            <tr>
+                <td>GPU</td>
+                <td>32</td>
+                <td>16</td>
+                <td>0.112608</td>
+            </tr>
+          <!-- Merge Sort 500 elements -->
+            <tr>
+                <td rowspan="3">Merge Sort</td>
+                <td rowspan="3">500 elements</td>
+                <td>CPU</td>
+                <td>-</td>
+                <td>-</td>
+                <td>0.276864</td>
+            </tr>
+            <tr>
+                <td>GPU</td>
+                <td>16</td>
+                <td>32</td>
+                <td>0.065606</td>
+            </tr>
+            <tr>
+                <td>GPU</td>
+                <td>32</td>
+                <td>16</td>
+                <td>0.064809</td>
+            </tr>
+          <!-- Bubble Sort 1000 elements -->
+            <tr>
+                <td rowspan="3">Bubble Sort</td>
+                <td rowspan="3">1000 elements</td>
+                <td>CPU</td>
+                <td>-</td>
+                <td>-</td>
+                <td>2.968457</td>
+            </tr>
+            <tr>
+                <td>GPU</td>
+                <td>16</td>
+                <td>63</td>
+                <td>0.208928</td>
+            </tr>
+            <tr>
+                <td>GPU</td>
+                <td>32</td>
+                <td>32</td>
+                <td>0.208992</td>
+            </tr>
+          <!-- Merge Sort 1000 elements -->
+            <tr>
+                <td rowspan="3">Merge Sort</td>
+                <td rowspan="3">1000 elements</td>
+                <td>CPU</td>
+                <td>-</td>
+                <td>-</td>
+                <td>0.504928</td>
+            </tr>
+            <tr>
+                <td>GPU</td>
+                <td>16</td>
+                <td>63</td>
+                <td>0.139932</td>
+            </tr>
+            <tr>
+                <td>GPU</td>
+                <td>32</td>
+                <td>32</td>
+                <td>0.141386</td>
+            </tr>
+        </tbody>
+    </table>
 
 ## RESULT:
-Thus, the program has been executed using CUDA to accelerate sorting operations and compare the performance of CPU and GPU implementations of Bubble Sort and Merge Sort.
+Thus, the program has been executed using CUDA to implement Bubble Sort and Merge Sort on the GPU using CUDA and analyze the efficiency of this sorting algorithm when parallelized.
